@@ -1,37 +1,18 @@
-from Gui import Main_window
-import customtkinter
-import tkinter
+from Gui import *
+from PacmanManager import PacmanManager as app_manager
+
 import os
-
-def create_font():
-    font_family = "Hikasami-Bold.ttf"
-    project_path = "~/Документы/Учеба/3 семестр/Open Source/GitUpdChecky/UpdChecky"
-    font_path = os.path.join(project_path, font_family)
-    font_size = 36,
-    font_weight= "Bold"
-    try:
-        title_font = customtkinter.CTkFont(
-            family = font_family,
-            size = font_size,
-            weight=font_weight,
-            file = font_path)
-    except Exception as ex:
-        print("Ошибка загрузки шрифта")
-    return title_font
-
 window_resolution = "800x600"
 
-main_windows = Main_window(window_resolution)
-main_windows.title("")
+#main_windows = SourceList_Menu(window_resolution)
+#main_windows.mainloop()
 
-title_text = "Welcome to UpdChecky"
-text_color = "#a564df"
+pacman = app_manager()
+installed_apps = pacman.get_installed_packages()
 
-title = customtkinter.CTkLabel(
-    master=main_windows,
-    text=title_text,
-    text_color=text_color,
-    font= create_font())
-title.place(anchor = "c", relx = 0.5, rely = 0.3)
-
-main_windows.mainloop()
+project_directory = os.getcwd()
+versions_directory = os.path.join(project_directory, "data")
+current_version_file = os.path.join(versions_directory, "current_version.json")
+if not os.path.exists(current_version_file):
+    pacman.write_data_on_json(installed_apps, current_version_file)
+pacman.get_current_version()
