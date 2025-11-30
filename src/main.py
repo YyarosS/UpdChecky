@@ -1,9 +1,9 @@
-from Gui import SourceList_Menu
+from Gui import Main_Window
 #from Manager import Manager as app_manager
 
-import os
+#import os
 
-main_windows = SourceList_Menu()
+main_windows = Main_Window()
 main_windows.mainloop()
 
 # pacman = app_manager()

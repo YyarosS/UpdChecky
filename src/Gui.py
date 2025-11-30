@@ -3,26 +3,15 @@ import customtkinter
 from tkinter import ttk 
 import os
 
-class Main_Window(customtkinter.CTk):
+class Background(customtkinter.CTk):
     def __init__(self):
         super().__init__()
+        #self.__window_resolution(self.is_resolution(window_resolution))
+        #self.geometry(self.__window_resolution)
         self.configure(fg_color = "#a564df")
         self.minsize(800,600)
         self.maxsize(1920,1080)
         self.add_background(self, 1000, 500,"#0e0f11", 8,"#625b9f", 6)
-    
-    @staticmethod
-    def is_resolution(resolution):
-        """Проверка, является ли resolution разрешением экрана"""
-        parts = resolution.split('x')
-        if len(parts) != 2:
-            return False
-        try:
-            x = int(parts[0].strip())
-            y = int(parts[1].strip())
-            return True
-        except ValueError:
-            return False
     
     def add_background(self,node, width, height, color, border_width, border_color, corner_radius):
         """Создание заднего фона"""
@@ -41,7 +30,7 @@ class Main_Window(customtkinter.CTk):
             relwidth = 1.1,
             relheight = .85)
           
-class SourceList_Menu(Main_Window):
+class Main_Window(Background):
     def __init__(self):
         super().__init__()
         self.main_color = "#a564df"
@@ -49,7 +38,6 @@ class SourceList_Menu(Main_Window):
         self.background_color = "#0e0f11"
         self.forground_color = "#c89bf3"
         self._set_scaled_min_max()
-        #self.__unselected_color = "#b1b2b5"
         self.__fonts_path ="~/Документы/Учеба/3 семестр/Open Source/GitUpdChecky/UpdChecky/ttf-fonts"
         
 
@@ -106,9 +94,6 @@ class SourceList_Menu(Main_Window):
         second_source = Source_Item(self, source_list, second_name, 0.5)
         third_source = Source_Item(self, source_list, third_name,  0.8)
         sources = [first_source, second_source, third_source]
-            # self.add_source_item(source_list, first_name, 0.2),
-            # self.add_source_item(source_list, second_name, 0.5),
-            # self.add_source_item(source_list, third_name,  0.8)]
 
         ok_btn = customtkinter.CTkButton(
             self,
@@ -151,26 +136,45 @@ class SourceList_Menu(Main_Window):
         
     def change_warframe(self, sources):
         """Смена начального окна, на главное"""
-        selected_sources= self.check_selected_sources(sources=sources)
-        for source in selected_sources:
-            print(source)
-        # try:
-        #     if len(selected_sources) != 0:
-        #         for source in selected_sources:
-        #             set.add_source(source)
-        # except Exception as e:
-        #     # customtkinter.CTkToplevel(self, text="Выбери хотя бы один источник!")
-        #     print("Выбери хотя бы один источник!")
+        selected_sources= self.check_selected_sources(sources)
+        self.save_sources(selected_sources)
+        
 
     def check_selected_sources(self, sources):
         """Проверка, какой источник был выбран и возврат его имени"""
         selected_sources = []
         for source in sources:
-            if source.is_selected():
+            if (source.is_selected()):
                 selected_sources.append(source.get_source_text())
         return selected_sources
     
-class Source_Item(SourceList_Menu):
+    def save_sources(self, sources):
+        if (len(sources) != 0):
+            for source in sources:
+                set.selected_source_list = source
+                set.selected_source_list
+        else:
+            error_window = customtkinter.CTkToplevel(self)
+            error_window.geometry("400x150")
+            error_window.title("Ошибка ввода источников")
+            error_massage = customtkinter.CTkLabel(
+                error_window,
+                text="Выбери хотя бы один источник!",
+                fg_color= self.background_color,
+                text_color= self.second_color,
+                font= self.create_font(
+                    "Hikasami-Medium.ttf",
+                    "Hikasami",
+                    22,
+                    "bold"))
+            error_massage.place(
+                anchor= 'c',
+                relx=0.5,
+                rely=0.4,
+                relwidth=1,
+                relheight=1)
+    
+class Source_Item(Main_Window):
     def  __init__(self,main_root,root_item, source_name, height):
         """Это конструктор класса Source_Item, целькоторого добавть на экран пункт для выбора.
         Для создания экземпляра нужны следующие аргументы: 
@@ -221,7 +225,7 @@ class Source_Item(SourceList_Menu):
         
     def is_selected(self):
         """Проверка является ли виджет CTkChcekBox активным"""
-        if self.__source_box.get() == "on": 
+        if (self.__source_box.get() == "on"): 
             return True
         else:
             return False
