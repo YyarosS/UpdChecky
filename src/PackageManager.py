@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 import json
 import re
-import os
 
 class PackageManager(ABC):
     """
@@ -34,9 +33,7 @@ class PackageManager(ABC):
             package = package.strip()
             if  not package:
                 continue
-
             match = pattern.match(package)
-
             if match:
                 package_name = match.group(1).strip()
                 package_version = match.group(2).strip()
