@@ -6,12 +6,14 @@ import os
 class Background(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-        #self.__window_resolution(self.is_resolution(window_resolution))
-        #self.geometry(self.__window_resolution)
-        self.configure(fg_color = "#a564df")
+        self.__fonts_path ="~/Документы/Учеба/3 семестр/Open Source/GitUpdChecky/UpdChecky/ttf-fonts"
+        self.main_color = "#a564df"
+        self.second_color = "#625b9f"
+        self.background_color = "#0e0f11"
+        self.configure(fg_color = self.main_color)
         self.minsize(800,600)
         self.maxsize(1920,1080)
-        self.add_background(self, 1000, 500,"#0e0f11", 8,"#625b9f", 6)
+        self.add_background(self, 1000, 500, self.background_color, 8, self.second_color, 6)
     
     def add_background(self,node, width, height, color, border_width, border_color, corner_radius):
         """Создание заднего фона"""
@@ -29,17 +31,36 @@ class Background(customtkinter.CTk):
             rely =.5,
             relwidth = 1.1,
             relheight = .85)
+        
+    def create_font(self, font_family_file, font_family, font_size, font_weight = "normal"):
+        """Импортирует шрифт из файла ttf или otf в проект.
+            font_family_file - название файла шрифта
+            font_family -название шрифта в программе
+            font_size - размер кегля шрифта
+            font_weight - жирность шрифта (Bold, Normal)
+        """
+        font = os.path.expanduser(self.__fonts_path)
+        font = os.path.join(font, font_family_file)
+            
+        try:
+            customtkinter.FontManager.load_font(font)
+            title_font = customtkinter.CTkFont(
+                family = font_family,
+                size = font_size,
+                weight=font_weight)
+            return title_font
+        except Exception as ex:
+            print(f"Предупреждение: Не удалось загрузить шрифт {font_family_file} с помощью FontManager: {ex}")
+            return customtkinter.CTkFont(
+                family="Arial",
+                size=font_size,
+                weight=font_weight)
           
-class Main_Window(Background):
+class Welcome_Window(Background):
     def __init__(self):
         super().__init__()
-        self.main_color = "#a564df"
-        self.second_color = "#625b9f"
-        self.background_color = "#0e0f11"
         self.forground_color = "#c89bf3"
         self._set_scaled_min_max()
-        self.__fonts_path ="~/Документы/Учеба/3 семестр/Open Source/GitUpdChecky/UpdChecky/ttf-fonts"
-        
 
         __title_text = "Welcome to UpdChecky"
         __title = customtkinter.CTkLabel(
@@ -109,36 +130,17 @@ class Main_Window(Background):
             height=40,
             text='ok')
         ok_btn.place(anchor='se', relx= 0.92, rely= 0.885)
-
-    def create_font(self, font_family_file, font_family, font_size, font_weight = "normal"):
-        """Импортирует шрифт из файла ttf или otf в проект.
-            font_family_file - название файла шрифта
-            font_family -название шрифта в программе
-            font_size - размер кегля шрифта
-            font_weight - жирность шрифта (Bold, Normal)
-        """
-        font = os.path.expanduser(self.__fonts_path)
-        font = os.path.join(font, font_family_file)
-            
-        try:
-            customtkinter.FontManager.load_font(font)
-            title_font = customtkinter.CTkFont(
-                family = font_family,
-                size = font_size,
-                weight=font_weight)
-            return title_font
-        except Exception as ex:
-            print(f"Предупреждение: Не удалось загрузить шрифт {font_family_file} с помощью FontManager: {ex}")
-            return customtkinter.CTkFont(
-                family="Arial",
-                size=font_size,
-                weight=font_weight)
         
     def change_warframe(self, sources):
         """Смена начального окна, на главное"""
         selected_sources= self.check_selected_sources(sources)
-        self.save_sources(selected_sources)
+
+        if not selected_sources:
+            self.show_error_window()
+            return
         
+        self.save_sources(selected_sources)
+        self.destroy_all_widgets(self)    
 
     def check_selected_sources(self, sources):
         """Проверка, какой источник был выбран и возврат его имени"""
@@ -148,33 +150,39 @@ class Main_Window(Background):
                 selected_sources.append(source.get_source_text())
         return selected_sources
     
+    def show_error_window(self):
+        error_window = customtkinter.CTkToplevel(self)
+        error_window.geometry("400x150")
+        error_window.title("Ошибка ввода источников")
+        error_massage = customtkinter.CTkLabel(
+            error_window,
+            text="Выбери хотя бы один источник!",
+            fg_color= self.background_color,
+            text_color= self.second_color,
+            font= self.create_font(
+                "Hikasami-Medium.ttf",
+                "Hikasami",
+                22,
+                "bold"))
+        error_massage.place(
+            anchor= 'c',
+            relx=0.5,
+            rely=0.4,
+            relwidth=1,
+            relheight=1)
+        
     def save_sources(self, sources):
-        if (len(sources) != 0):
             for source in sources:
                 set.selected_source_list = source
                 set.selected_source_list
-        else:
-            error_window = customtkinter.CTkToplevel(self)
-            error_window.geometry("400x150")
-            error_window.title("Ошибка ввода источников")
-            error_massage = customtkinter.CTkLabel(
-                error_window,
-                text="Выбери хотя бы один источник!",
-                fg_color= self.background_color,
-                text_color= self.second_color,
-                font= self.create_font(
-                    "Hikasami-Medium.ttf",
-                    "Hikasami",
-                    22,
-                    "bold"))
-            error_massage.place(
-                anchor= 'c',
-                relx=0.5,
-                rely=0.4,
-                relwidth=1,
-                relheight=1)
+            
+    def destroy_all_widgets(self, parent_object):
+        """ Уничтожает все виджеты CustomTkinter, являющиеся атрибутами
+        переданного объекта (например, ctk.CTkFrame или ctk.CTk)
+        """
+        parent_object.destroy()
     
-class Source_Item(Main_Window):
+class Source_Item(Welcome_Window):
     def  __init__(self,main_root,root_item, source_name, height):
         """Это конструктор класса Source_Item, целькоторого добавть на экран пункт для выбора.
         Для создания экземпляра нужны следующие аргументы: 
@@ -233,3 +241,26 @@ class Source_Item(Main_Window):
     def get_source_text(self):
         """Возвращение значения источника установки программ"""
         return self.__source_name.cget("text")
+    
+class Main_Windows(Background):
+    def __init__(self):
+        super().__init__()
+        self.forground_color = "#c89bf3"
+
+        __title = customtkinter.CTkFrame(
+            self,
+            corner_radius= 20,
+            fg_color= self.second_color,
+            font = self.create_font(
+                "Hikasami-Bold.ttf",
+                "Hikasami",
+                36,
+                'bold'
+            ))
+        __title.place(
+            relwidth= 0.35,
+            relheight= 0.2,
+            anchor='c',
+            rely= 0.25,
+            relx= 1,
+        )
