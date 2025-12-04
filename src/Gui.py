@@ -171,7 +171,7 @@ class Welcome_Window(Background):
     def save_sources(self, sources):
         settings = Settings()
         for source in sources:
-            settings.add_source(source_name=source)
+            settings.add_source(source)
             
     def destroy_all_widgets(self, parent_object):
         """ Уничтожает все виджеты CustomTkinter, являющиеся атрибутами

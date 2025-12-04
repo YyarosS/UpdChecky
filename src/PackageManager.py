@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
 import json
-import os
 import re
 
 class PackageManager(ABC):
@@ -40,7 +39,8 @@ class PackageManager(ABC):
                 package_version = match.group(2).strip()
                 package_data[package_name] = package_version
         return package_data
-        
+    
+    @staticmethod
     def write_data_on_json(data, file_name):
         with open (file_name, 'w', encoding='utf-8') as base:
             json.dump(data, base, ensure_ascii= False, indent=4)
@@ -56,23 +56,3 @@ class PackageManager(ABC):
         except FileNotFoundError:
             print(f"Ошибка: Файл '{file_directory}' не найден.")
             return None
-        
-    # def add_installed_source(self, file_path, new_source, list_key = "installation_sources"):
-    #     data = {}
-        
-    #     if list_key not in data or not isinstance(data.get(list_key), list):
-    #         data[list_key] = []
-            
-    #     if isinstance(data[list_key], list):
-    #         data[list_key].append(new_source)
-    #     else:
-    #         print(f"Ошибка: Значение по ключу '{list_key}' не является списком.")
-    #         return False
-        
-    #     try:
-    #         self.write_data_on_json(data=data, file_name=file_path)
-    #         print(f"Успех: Источник '{new_source.get('manager', 'Новый источник')}' добавлен в файл '{file_path}'.")
-    #         return True
-    #     except IOError as e:
-    #         print(f"Ошибка записи файла '{file_path}': {e}")
-    #         return False
