@@ -57,22 +57,22 @@ class PackageManager(ABC):
             print(f"Ошибка: Файл '{file_directory}' не найден.")
             return None
         
-    def add_installed_source(self, file_path, new_source, list_key = "installation_sources"):
-        data = {}
+    # def add_installed_source(self, file_path, new_source, list_key = "installation_sources"):
+    #     data = {}
         
-        if list_key not in data or not isinstance(data.get(list_key), list):
-            data[list_key] = []
+    #     if list_key not in data or not isinstance(data.get(list_key), list):
+    #         data[list_key] = []
             
-        if isinstance(data[list_key], list):
-            data[list_key].append(new_source)
-        else:
-            print(f"Ошибка: Значение по ключу '{list_key}' не является списком.")
-            return False
+    #     if isinstance(data[list_key], list):
+    #         data[list_key].append(new_source)
+    #     else:
+    #         print(f"Ошибка: Значение по ключу '{list_key}' не является списком.")
+    #         return False
         
-        try:
-            self.write_data_on_json(data=data, file_name=file_path)
-            print(f"Успех: Источник '{new_source.get('manager', 'Новый источник')}' добавлен в файл '{file_path}'.")
-            return True
-        except IOError as e:
-            print(f"Ошибка записи файла '{file_path}': {e}")
-            return False
+    #     try:
+    #         self.write_data_on_json(data=data, file_name=file_path)
+    #         print(f"Успех: Источник '{new_source.get('manager', 'Новый источник')}' добавлен в файл '{file_path}'.")
+    #         return True
+    #     except IOError as e:
+    #         print(f"Ошибка записи файла '{file_path}': {e}")
+    #         return False
