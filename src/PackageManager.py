@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 import json
+import os
 import re
 
 class PackageManager(ABC):
@@ -40,19 +41,40 @@ class PackageManager(ABC):
                 package_data[package_name] = package_version
         return package_data
         
-    def write_data_on_json(self, data, file_name):
+    def write_data_on_json(data, file_name):
         with open (file_name, 'w', encoding='utf-8') as base:
-            json.dump(data, base, ensure_ascii= True, indent=4)
+            json.dump(data, base, ensure_ascii= False, indent=4)
 
     def out_data_from_json(self, file_directory):
         try:
             with open(file_directory, 'r', encoding='utf-8') as file:
                 python_object = json.load(file)
-                for package_name, package_version in python_object.items():
-                    print(f"{package_name} {package_version}") 
+                #for package_name, package_version in python_object.items():
+                    #print(f"{package_name} {package_version}") 
+            return python_object
         except json.JSONDecodeError as e:
-            print(f"Ошибка декодирования JSON в файле '{file}': {e}")
+            print(f"Ошибка декодирования JSON в файле '{file_directory}': {e}")
             return None
         except FileNotFoundError:
-            print(f"Ошибка: Файл '{file}' не найден.")
+            print(f"Ошибка: Файл '{file_directory}' не найден.")
             return None
+        
+    def add_installed_source(self, file_path, new_source, list_key = "installation_sources"):
+        data = {}
+        
+        if list_key not in data or not isinstance(data.get(list_key), list):
+            data[list_key] = []
+            
+        if isinstance(data[list_key], list):
+            data[list_key].append(new_source)
+        else:
+            print(f"Ошибка: Значение по ключу '{list_key}' не является списком.")
+            return False
+        
+        try:
+            self.write_data_on_json(data=data, file_name=file_path)
+            print(f"Успех: Источник '{new_source.get('manager', 'Новый источник')}' добавлен в файл '{file_path}'.")
+            return True
+        except IOError as e:
+            print(f"Ошибка записи файла '{file_path}': {e}")
+            return False

@@ -1,6 +1,7 @@
-from Settings import Settings  as set
+from Settings import Settings
+from PIL import Image
+
 import customtkinter
-from tkinter import ttk 
 import os
 
 class Background(customtkinter.CTk):
@@ -140,7 +141,7 @@ class Welcome_Window(Background):
             return
         
         self.save_sources(selected_sources)
-        self.destroy_all_widgets(self)    
+        self.destroy_all_widgets(self)
 
     def check_selected_sources(self, sources):
         """Проверка, какой источник был выбран и возврат его имени"""
@@ -159,11 +160,7 @@ class Welcome_Window(Background):
             text="Выбери хотя бы один источник!",
             fg_color= self.background_color,
             text_color= self.second_color,
-            font= self.create_font(
-                "Hikasami-Medium.ttf",
-                "Hikasami",
-                22,
-                "bold"))
+            font= self.create_font("Hikasami-Medium.ttf","Hikasami",22,"bold"))
         error_massage.place(
             anchor= 'c',
             relx=0.5,
@@ -172,9 +169,9 @@ class Welcome_Window(Background):
             relheight=1)
         
     def save_sources(self, sources):
-            for source in sources:
-                set.selected_source_list = source
-                set.selected_source_list
+        settings = Settings()
+        for source in sources:
+            settings.add_source(source_name=source)
             
     def destroy_all_widgets(self, parent_object):
         """ Уничтожает все виджеты CustomTkinter, являющиеся атрибутами
@@ -247,20 +244,54 @@ class Main_Windows(Background):
         super().__init__()
         self.forground_color = "#c89bf3"
 
-        __title = customtkinter.CTkFrame(
+        __title_back = customtkinter.CTkFrame(
             self,
-            corner_radius= 20,
+            bg_color=self.background_color,
             fg_color= self.second_color,
+            corner_radius= 30)
+        __title_back.place(
+            relwidth= 0.4,
+            relheight= 0.08,
+            anchor='ne',
+            rely= 0.15,
+            relx= 1.1)
+        
+        __title = customtkinter.CTkLabel(
+            __title_back,
+            text="UpdChecky",
+            text_color=self.background_color,
+            bg_color=self.second_color,
             font = self.create_font(
                 "Hikasami-Bold.ttf",
                 "Hikasami",
-                36,
-                'bold'
-            ))
+                32,
+                'bold'))
         __title.place(
-            relwidth= 0.35,
-            relheight= 0.2,
             anchor='c',
-            rely= 0.25,
-            relx= 1,
-        )
+            relx=0.4,
+            rely=0.5)
+
+        image_path = os.path.join("images", "reload.png")
+        __reload_btn = customtkinter.CTkButton(
+            self,
+            image = self.__add_image(image_path, 50, 50),
+            fg_color = self.second_color,
+            bg_color = self.background_color,
+            text = "")
+        __reload_btn.place(
+            anchor  = "nw",
+            relwidth = 0.095,
+            relheight = 0.095,
+            rely = 0.145,
+            relx = 0.085)
+        
+    def __add_image(self, image_path, x, y):
+        try:
+            my_image = customtkinter.CTkImage(
+                    light_image=Image.open(image_path),
+                    dark_image=Image.open(image_path),
+                    size=(x, y))
+            return my_image
+        except FileNotFoundError:
+            print(f"Ошибка: файл изображения не найден по пути: {image_path}")
+            self.my_image = None
