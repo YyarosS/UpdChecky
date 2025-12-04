@@ -49,8 +49,6 @@ class PackageManager(ABC):
         try:
             with open(file_directory, 'r', encoding='utf-8') as file:
                 python_object = json.load(file)
-                #for package_name, package_version in python_object.items():
-                    #print(f"{package_name} {package_version}") 
             return python_object
         except json.JSONDecodeError as e:
             print(f"Ошибка декодирования JSON в файле '{file_directory}': {e}")

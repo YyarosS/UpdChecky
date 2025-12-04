@@ -16,7 +16,6 @@ class Settings:
         self.save_on_storage(self.__selected_sources, file_path=file_path)
 
     def __determine_manager(self, manager):
-
         if (manager == "From package manager"):
             manager_list= ['apt', 'dnf', 'pacman']
             for manager in manager_list:
@@ -31,4 +30,4 @@ class Settings:
 
     def save_on_storage(self, sources, file_path):
         for source in sources:
-            pm.add_installed_source(file_path=file_path, new_source=source)
+            pm.write_data_on_json(file_path=file_path, new_source=source)

@@ -12,41 +12,27 @@ def load_main_window():
         main_window = Main_Windows()
         
         pacman = app_manager()
-        installed_apps = pacman.get_installed_packages()
-
-        def cached_versions_file():
-            project_directory = os.getcwd()
-            versions_directory = os.path.join(project_directory, "data")
-            current_version_file = os.path.join(versions_directory, "current_version.json")
-            return current_version_file
 
         def is_new_version(current, actual):
             for cur_version in current:
                 for new_version in actual:
-                    if cur_version == new_version:
+                    if (cur_version == new_version):
                         return False
                     return True
                 
         def show_updated_apps():
-            if lattest_versions != '':
-                print(lattest_versions)
+            if lattest_versions != None:
+                for app in lattest_versions:
+                    print(f"{app} {lattest_versions.get(app)}")
             else:
                 print("Обновлений пока не обнаружено")
 
-        current_app_versions = cached_versions_file()
-
-        if not os.path.exists(current_app_versions):
-            file_data = {}
-            for app_name, app_version in installed_apps, current_app_versions:
-                file_data[app_name] = app_version
-            pacman.write_data_on_json(file_data, current_app_versions)
-
-        current_versions =pacman.get_current_version()
+        current_versions = pacman.get_current_version()
         lattest_versions = pacman.get_latest_version()
 
         update = is_new_version(current_versions, lattest_versions)
 
-        if update:
+        if (update):
             show_updated_apps()
 
         main_window.mainloop()

@@ -28,20 +28,19 @@ class Manager(pm):
             print("нет данных для обработки.")
 
     def get_current_version(self):
-        current_verssions_file = os.path.join(os.getcwd(), "data/current_version.json")
+        #current_verssions_file = os.path.join(os.getcwd(), "data/current_version.json")
+        installed_apps = self.get_installed_packages()
         try:
-            versions = self.out_data_from_json(current_verssions_file)
-            if versions != None:
-                return versions
+            if installed_apps != None:
+                return installed_apps
         except Exception as ex:
-            print(f"объект versions пуст")
+            print(f"Ошибка нахождения установленных пакетов или их версий")
 
     def get_latest_version(self):#, sync_command, list_command):
         
         sync_command = subprocess.run(
             ["sudo","pacman", "-Sy"],
             #sync_command,
-            #capture_output=True,
             check=True,
             text=True,
             stderr=subprocess.DEVNULL)
@@ -52,5 +51,5 @@ class Manager(pm):
             input=versions_output,
             capture_output=True,
             check=True, text=True)
-        parsed_vesions_command = subprocess.run(["awk", "{print $1, $4}"], input=call_version_list)
+        parsed_vesions_command = subprocess.run(["awk", "{print $1, $4}"], input=versions_output)
         return parsed_vesions_command
