@@ -1,7 +1,6 @@
 from Gui import Welcome_Window, Main_Windows
 from Manager import Manager as app_manager
 
-from Settings import Settings as set
 import os
 
 def create_welcome_screen():
@@ -11,36 +10,51 @@ def create_welcome_screen():
 def load_main_window():
     if __name__ == "__main__":
         main_window = Main_Windows()
-        main_window.mainloop()
 
-        settings = set()
-        settings.select_utility_commands()
-        utility_commands = settings.utility_commands
-        manager = app_manager()
+        managers = create_managers()
+        utility_commands = set_utility_comands()
+        #manager = app_manager()
+        #utility_commands = manager.select_utility_commands()
+        def set_utility_comands():
+            commands = []
+            for manager in  managers:
+                commands.append(manager.select_utility_commands())
+            return commands
 
-        def is_new_version(current, actual):
-            for cur_version in current:
-                for new_version in actual:
-                    if (cur_version == new_version):
-                        return False
-                    return True
+        def create_managers(manager_list):
+            managers = []
+            for manager_name in manager_list:
+                manager = app_manager(manager_list.get(manager_name))
+                managers[manager_name] = manager
+            return managers
+        
+        def is_new_version(actual):
+            if actual and isinstance(actual, dict):
+                return True
+            return False
 
-        def show_updated_apps():
-            if lattest_versions != None:
-                for app in lattest_versions:
-                    print(f"{app} {lattest_versions.get(app)}")
+        def show_updated_apps(latest, current):
+            parsed_latest = manager.parse_output(latest)
+            if parsed_latest != None:
+                apps_count = 0
+                for app in parsed_latest:
+                    print(f"{app} {parsed_latest.get(app)}")
+                    main_window.out_app(
+                        app, 
+                        parsed_latest.get(app),
+                        current.get(app),
+                        apps_count) 
+                    apps_count += 1
             else:
                 print("Обновлений пока не обнаружено")
         
-        for utility in utility_commands:
-            for commands in utility:
-                current_versions = manager.get_current_version(commands[0])
-                lattest_versions = manager.get_latest_version(commands[1], commands[2])
-
+        current_versions = manager.get_current_version(utility_commands[0])
+        lattest_versions = manager.get_latest_version(utility_commands[2], utility_commands[1],)
         update = is_new_version(current_versions, lattest_versions)
 
         if (update):
-            show_updated_apps()
+            show_updated_apps(lattest_versions, current_versions)
+    main_window.mainloop()
 
 data_path = "data"
 file_name = "sources.json"

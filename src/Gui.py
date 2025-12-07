@@ -285,13 +285,84 @@ class Main_Windows(Background):
             rely = 0.145,
             relx = 0.085)
         
+        self.__scroll_frame = customtkinter.CTkScrollableFrame(
+                self,
+                fg_color=self.background_color,
+                bg_color=self.background_color)
+        self.__scroll_frame.place(
+                anchor = "c",
+                relheight = 0.6,
+                relwidth = 0.85,
+                relx = 0.5,
+                rely = 0.55)
+
     def __add_image(self, image_path, x, y):
         try:
             my_image = customtkinter.CTkImage(
                     light_image=Image.open(image_path),
                     dark_image=Image.open(image_path),
-                    size=(x, y))
+                    size = (x, y))
             return my_image
         except FileNotFoundError:
             print(f"Ошибка: файл изображения не найден по пути: {image_path}")
             self.my_image = None
+
+    def out_app(self, app_name, current_version, latest_version,row_index):
+        #self.__scroll_frame.grid_columnconfigure(index=row_index, weight=1)
+        # self.__scroll_frame.grid_rowconfigure(index=row_index, weight=1)
+
+        app = customtkinter.CTkFrame(
+            self.__scroll_frame,
+            fg_color = self.main_color,
+            border_color = self.second_color,
+            height=65,
+            width=500,
+            corner_radius = 25,
+            border_width = 5)
+        app.pack(anchor = 'n',fill='both', expand=True, side="top", ipady = 22, pady = 5)
+
+        
+        name = customtkinter.CTkLabel(
+            app,
+            font = self.create_font("Hikasami-Bold.ttf","Hikasami",28,'bold'),
+            text_color=self.background_color,
+            fg_color = self.forground_color,
+            bg_color= self.main_color,
+            corner_radius = 15,
+            text = app_name)
+        name.place(
+            anchor = 'c',
+            relwidth = 0.55,
+            relheight = 0.7,
+            relx = 0.3,
+            rely = 0.5)
+        
+        current = customtkinter.CTkLabel(
+            app,
+            font = self.create_font("Hikasami-Medium.ttf","Hikasami",20,'bold'),
+            text_color=self.background_color,
+            fg_color = "#89969b",
+            bg_color= self.main_color,
+            text=current_version,
+            corner_radius = 15)
+        current.place(
+            anchor = "c",
+            relwidth = 0.18,
+            relheight = 0.7,
+            relx = 0.68,
+            rely = 0.5)
+        
+        latest = customtkinter.CTkLabel(
+            app,
+            font = self.create_font("Hikasami-Medium.ttf","Hikasami",20,'bold'),
+            text_color = self.background_color,
+            fg_color =self.second_color,
+            bg_color = self.main_color,
+            text = latest_version,
+            corner_radius = 15)
+        latest.place(
+            anchor = "w",
+            relwidth = 0.2,
+            relheight = 0.7,
+            relx = 0.78,
+            rely = 0.5)
