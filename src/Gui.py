@@ -285,6 +285,18 @@ class Main_Windows(Background):
             rely = 0.145,
             relx = 0.085)
         
+        self.__scroll_frame = customtkinter.CTkScrollableFrame(
+            self,
+            fg_color = self.background_color,
+            bg_color = self.background_color)
+        self.__scroll_frame.place(
+            anchor = 'c',
+            relwidth = 0.83,
+            relheight = 0.6,
+            rely = 0.55,
+            relx = 0.5)
+        
+        
     def __add_image(self, image_path, x, y):
         try:
             my_image = customtkinter.CTkImage(
@@ -295,3 +307,19 @@ class Main_Windows(Background):
         except FileNotFoundError:
             print(f"Ошибка: файл изображения не найден по пути: {image_path}")
             self.my_image = None
+
+    def out_apps(self, apps_name, current_versions, latest_versions, apps_count):
+        app = customtkinter.CTkFrame(
+            #self.__scroll_frame,
+            self,
+            fg_color= self.main_color,
+            bg_color=self.background_color,
+            border_color=self.second_color,
+            corner_radius=18,
+            border_width=5)
+        app.pack(
+            anchor = 'c',
+            fill = 'x',
+            expand = True,
+            side = 'top',
+            pady = 10)

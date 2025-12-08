@@ -1,7 +1,6 @@
 from Gui import Welcome_Window, Main_Windows
 from Manager import Manager as app_manager
 
-from Settings import Settings as set
 import os
 
 def create_welcome_screen():
@@ -11,36 +10,41 @@ def create_welcome_screen():
 def load_main_window():
     if __name__ == "__main__":
         main_window = Main_Windows()
-        main_window.mainloop()
-
-        settings = set()
-        settings.select_utility_commands()
-        utility_commands = settings.utility_commands
+        
         manager = app_manager()
 
-        def is_new_version(current, actual):
-            for cur_version in current:
-                for new_version in actual:
-                    if (cur_version == new_version):
-                        return False
-                    return True
-
-        def show_updated_apps():
-            if lattest_versions != None:
-                for app in lattest_versions:
-                    print(f"{app} {lattest_versions.get(app)}")
-            else:
-                print("Обновлений пока не обнаружено")
+        sources = get_sources(manager) 
+        utility_commands = manager.select_utility_commands(sources)
         
-        for utility in utility_commands:
-            for commands in utility:
-                current_versions = manager.get_current_version(commands[0])
-                lattest_versions = manager.get_latest_version(commands[1], commands[2])
+        # for utility in utility_commands:
+        #     for commands in utility:
+        current_versions = manager.get_current_version(utility_commands[0])
+        latest_versions = manager.get_latest_version(utility_commands[1], utility_commands[2])
 
-        update = is_new_version(current_versions, lattest_versions)
+        update = is_new_version(latest_versions)
 
         if (update):
-            show_updated_apps()
+            show_updated_apps(latest_versions, current_versions, main_window)
+
+        main_window.mainloop()
+
+def get_sources(manager):
+    data_path = os.path.join(os.getcwd(), "data")
+    sources_path = os.path.join(data_path,"sources.json")
+    sources = manager.out_data_from_json(sources_path)
+    return sources
+
+def is_new_version(actual):
+    if actual != None:
+        return True
+    return False
+
+def show_updated_apps(latest_versions,current_versions, main_window):
+    count = 0
+    for app in latest_versions:
+        print(f"{app} {latest_versions.get(app)}")
+        main_window.out_apps(app, current_versions, latest_versions.get(app), count)
+        count +=1
 
 data_path = "data"
 file_name = "sources.json"
