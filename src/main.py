@@ -14,17 +14,28 @@ def load_main_window():
         manager = app_manager()
 
         sources = get_sources(manager) 
-        utility_commands = manager.select_utility_commands(sources)
-        
-        # for utility in utility_commands:
-        #     for commands in utility:
-        current_versions = manager.get_current_version(utility_commands[0])
-        latest_versions = manager.get_latest_version(utility_commands[1], utility_commands[2])
 
-        update = is_new_version(latest_versions)
+        utility_commands = manager.select_utility_commands(sources)
+        all_updates = {}
+        cur_versions = {}
+        for utility in utility_commands:
+            if (len(utility) == 3):
+                current_versions = manager.get_current_version(utility[0])
+                latest_versions = manager.get_latest_version(utility[2], utility[1])
+                all_updates.update(latest_versions)
+                cur_versions.update(current_versions)
+            else:
+                current_versions = manager.get_current_version(utility[0])
+                latest_versions = manager.get_latest_version(utility[1])
+                all_updates.update(latest_versions)
+                cur_versions.update(current_versions)
+
+        update = is_new_version(all_updates)
 
         if (update):
-            show_updated_apps(latest_versions, current_versions, main_window)
+            show_updated_apps(all_updates, cur_versions, main_window)
+        else:
+            main_window.empty_out()
 
         main_window.mainloop()
 
@@ -35,16 +46,13 @@ def get_sources(manager):
     return sources
 
 def is_new_version(actual):
-    if actual != None:
+    if actual:
         return True
     return False
 
 def show_updated_apps(latest_versions,current_versions, main_window):
-    count = 0
     for app in latest_versions:
-        print(f"{app} {latest_versions.get(app)}")
-        main_window.out_apps(app, current_versions, latest_versions.get(app), count)
-        count +=1
+        main_window.out_apps(app, current_versions.get(app), latest_versions.get(app))
 
 data_path = "data"
 file_name = "sources.json"

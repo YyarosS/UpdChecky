@@ -270,20 +270,6 @@ class Main_Windows(Background):
             anchor='c',
             relx=0.4,
             rely=0.5)
-
-        image_path = os.path.join("images", "reload.png")
-        __reload_btn = customtkinter.CTkButton(
-            self,
-            image = self.__add_image(image_path, 50, 50),
-            fg_color = self.second_color,
-            bg_color = self.background_color,
-            text = "")
-        __reload_btn.place(
-            anchor  = "nw",
-            relwidth = 0.095,
-            relheight = 0.095,
-            rely = 0.145,
-            relx = 0.085)
         
         self.__scroll_frame = customtkinter.CTkScrollableFrame(
             self,
@@ -295,31 +281,139 @@ class Main_Windows(Background):
             relheight = 0.6,
             rely = 0.55,
             relx = 0.5)
-        
-        
-    def __add_image(self, image_path, x, y):
-        try:
-            my_image = customtkinter.CTkImage(
-                    light_image=Image.open(image_path),
-                    dark_image=Image.open(image_path),
-                    size=(x, y))
-            return my_image
-        except FileNotFoundError:
-            print(f"Ошибка: файл изображения не найден по пути: {image_path}")
-            self.my_image = None
 
-    def out_apps(self, apps_name, current_versions, latest_versions, apps_count):
+        # image_path = os.path.join("images", "reload.png")
+        # __reload_btn = customtkinter.CTkButton(
+        #     self,
+        #     image = self.__add_image(image_path, 50, 50),
+        #     fg_color = self.second_color,
+        #     bg_color = self.background_color,
+        #     text = "")
+        # __reload_btn.place(
+        #     anchor  = "nw",
+        #     relwidth = 0.095,
+        #     relheight = 0.095,
+        #     rely = 0.145,
+        #     relx = 0.085)
+        
+    # def __add_image(self, image_path, x, y):
+    #     try:
+    #         my_image = customtkinter.CTkImage(
+    #                 light_image=Image.open(image_path),
+    #                 dark_image=Image.open(image_path),
+    #                 size=(x, y))
+    #         return my_image
+    #     except FileNotFoundError:
+    #         print(f"Ошибка: файл изображения не найден по пути: {image_path}")
+    #         self.my_image = None
+
+    def out_apps(self, apps_name, current_versions, latest_versions):
+        print(self.__scroll_frame)
         app = customtkinter.CTkFrame(
-            #self.__scroll_frame,
-            self,
+            self.__scroll_frame,
             fg_color= self.main_color,
             bg_color=self.background_color,
             border_color=self.second_color,
+            height= 100,
             corner_radius=18,
             border_width=5)
         app.pack(
-            anchor = 'c',
+            anchor = 'n',
             fill = 'x',
-            expand = True,
+        
             side = 'top',
-            pady = 10)
+            pady = 8)
+        
+        name = customtkinter.CTkLabel(
+            app,
+            font= self.create_font(
+                "Hikasami-Bold.ttf",
+                "Hikasami",
+                26,
+                'bold'),
+            corner_radius = 18,
+            fg_color = self.forground_color,
+            bg_color = self.main_color,
+            text_color = self.background_color,
+            text = self.out_name(apps_name))
+        name.place(
+            anchor = 'c',
+            relwidth = 0.55,
+            relheight = 0.7,
+            rely = 0.5,
+            relx = 0.3)
+        
+        current = customtkinter.CTkLabel(
+            app,
+            font = self.create_font(
+                "Hikasami-Medium.ttf",
+                "Hikasami",
+                20,
+                'bold'),
+            corner_radius = 18,
+            fg_color = "#89969b",
+            bg_color = self.main_color,
+            text_color=self.background_color,
+            text = self.out_version(current_versions))
+        current.place(
+            anchor = 'c',
+            relwidth = 0.18,
+            relheight = 0.7,
+            rely = 0.5,
+            relx = 0.69)
+        
+        latest =  customtkinter.CTkLabel(
+            app,
+            font = self.create_font(
+                "Hikasami-Medium.ttf",
+                "Hikasami",
+                20,
+                'bold'),
+            corner_radius = 18,
+            bg_color = self.main_color,
+            fg_color = self.second_color,
+            text_color = self.background_color,
+            text = self.out_version(latest_versions))
+        latest.place(
+            anchor = 'c',
+            relwidth = 0.18,
+            relheight = 0.7,
+            rely = 0.5,
+            relx = 0.88)
+    
+    def out_version(self,  version):
+        version_lenght = len(version)
+        if version_lenght >= 10:
+            half_str = int(version_lenght/2)
+            out = f"...{version[half_str:version_lenght]}"
+            return out
+        
+        return version
+    
+    def out_name(self, name):
+        lenght =  len(name)
+        if  lenght  >= 24:
+            out = f"{name[:20]}..."
+            return out
+        
+        return name
+    
+    def empty_out(self):
+        out_text = customtkinter.CTkLabel(
+            self,
+            bg_color =  self.background_color,
+            fg_color =  self.main_color,
+            text_color = self.background_color,
+            text = "Нет пакетов для обновления.",
+            font = self.create_font(
+                "Hikasami-Medium.ttf",
+                "Hikasami",
+                22,
+                'bold'),
+            corner_radius = 20)
+        out_text.place(
+            anchor = 'c',
+            relwidth = 0.4,
+            relheight =  0.1,
+            relx = 0.5,
+            rely = 0.5)
