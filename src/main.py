@@ -1,37 +1,65 @@
-from Gui import Main_window
-import customtkinter
-import tkinter
+from Gui import Welcome_Window, Main_Windows
+from Manager import Manager as app_manager
+
 import os
 
-def create_font():
-    font_family = "Hikasami-Bold.ttf"
-    project_path = "~/Документы/Учеба/3 семестр/Open Source/GitUpdChecky/UpdChecky"
-    font_path = os.path.join(project_path, font_family)
-    font_size = 36,
-    font_weight= "Bold"
-    try:
-        title_font = customtkinter.CTkFont(
-            family = font_family,
-            size = font_size,
-            weight=font_weight,
-            file = font_path)
-    except Exception as ex:
-        print("Ошибка загрузки шрифта")
-    return title_font
+def create_welcome_screen():
+    welcome_windows = Welcome_Window()
+    welcome_windows.mainloop()
 
-window_resolution = "800x600"
+def load_main_window():
+    if __name__ == "__main__":
+        main_window = Main_Windows()
+        
+        manager = app_manager()
 
-main_windows = Main_window(window_resolution)
-main_windows.title("")
+        sources = get_sources(manager) 
 
-title_text = "Welcome to UpdChecky"
-text_color = "#a564df"
+        utility_commands = manager.select_utility_commands(sources)
+        all_updates = {}
+        cur_versions = {}
+        for utility in utility_commands:
+            if (len(utility) == 3):
+                current_versions = manager.get_current_version(utility[0])
+                latest_versions = manager.get_latest_version(utility[2], utility[1])
+                all_updates.update(latest_versions)
+                cur_versions.update(current_versions)
+            else:
+                current_versions = manager.get_current_version(utility[0])
+                latest_versions = manager.get_latest_version(utility[1])
+                all_updates.update(latest_versions)
+                cur_versions.update(current_versions)
 
-title = customtkinter.CTkLabel(
-    master=main_windows,
-    text=title_text,
-    text_color=text_color,
-    font= create_font())
-title.place(anchor = "c", relx = 0.5, rely = 0.3)
+        update = is_new_version(all_updates)
 
-main_windows.mainloop()
+        if (update):
+            show_updated_apps(all_updates, cur_versions, main_window)
+        else:
+            main_window.empty_out()
+
+        main_window.mainloop()
+
+def get_sources(manager):
+    data_path = os.path.join(os.getcwd(), "data")
+    sources_path = os.path.join(data_path,"sources.json")
+    sources = manager.out_data_from_json(sources_path)
+    return sources
+
+def is_new_version(actual):
+    if actual:
+        return True
+    return False
+
+def show_updated_apps(latest_versions,current_versions, main_window):
+    for app in latest_versions:
+        main_window.out_apps(app, current_versions.get(app), latest_versions.get(app))
+
+data_path = "data"
+file_name = "sources.json"
+sources_list = os.path.join(data_path, file_name)
+
+if (os.path.exists(sources_list)):
+    load_main_window()
+else:
+    create_welcome_screen()
+    load_main_window()
