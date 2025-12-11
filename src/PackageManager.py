@@ -24,26 +24,31 @@ class PackageManager(ABC):
         pass
 
     def parse_output(self, terminal_output):
+        try:
+            package_data = {}
+            package_out = terminal_output.strip().split('\n')
+            pattern = re.compile(r'(.+?)\s+(.+)')
 
-        package_data = {}
-        package_out = terminal_output.strip().split('\n')
-        pattern = re.compile(r'(.+?)\s+(.+)')
-
-        for  package in package_out:
-            package = package.strip()
-            if  not package:
-                continue
-            match = pattern.match(package)
-            if match:
-                package_name = match.group(1).strip()
-                package_version = match.group(2).strip()
-                package_data[package_name] = package_version
-        return package_data
+            for  package in package_out:
+                package = package.strip()
+                if  not package:
+                    continue
+                match = pattern.match(package)
+                if match:
+                    package_name = match.group(1).strip()
+                    package_version = match.group(2).strip()
+                    package_data[package_name] = package_version
+            return package_data
+        except Exception as e:
+            print("Ошибка обработки команды.")
     
     @staticmethod
     def write_data_on_json(data, file_name):
-        with open (file_name, 'w', encoding='utf-8') as base:
-            json.dump(data, base, ensure_ascii= False, indent=4)
+        try:
+            with open (file_name, 'w', encoding='utf-8') as base:
+                json.dump(data, base, ensure_ascii= False, indent=4)
+        except Exception as e:
+            print("Не удалось найти или открыть файл.")
 
     def out_data_from_json(self, file_directory):
         try:

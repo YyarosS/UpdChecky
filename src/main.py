@@ -4,31 +4,39 @@ from Manager import Manager as app_manager
 import os
 
 def create_welcome_screen():
-    welcome_windows = Welcome_Window()
-    welcome_windows.mainloop()
+    try:
+        welcome_windows = Welcome_Window()
+        welcome_windows.mainloop()
+    except Exception as e:
+        print("Ошибка создания приветственного окна!")
 
 def load_main_window():
     if __name__ == "__main__":
-        main_window = Main_Windows()
+        try:
+            main_window = Main_Windows()
         
-        manager = app_manager()
+            manager = app_manager()
+            sources = get_sources(manager) 
+            utility_commands = manager.select_utility_commands(sources)
+        except Exception as e:
+            print("Ошибка открытия программы!")
 
-        sources = get_sources(manager) 
-
-        utility_commands = manager.select_utility_commands(sources)
         all_updates = {}
         cur_versions = {}
-        for utility in utility_commands:
-            if (len(utility) == 3):
-                current_versions = manager.get_current_version(utility[0])
-                latest_versions = manager.get_latest_version(utility[2], utility[1])
-                all_updates.update(latest_versions)
-                cur_versions.update(current_versions)
-            else:
-                current_versions = manager.get_current_version(utility[0])
-                latest_versions = manager.get_latest_version(utility[1])
-                all_updates.update(latest_versions)
-                cur_versions.update(current_versions)
+        try:
+            for utility in utility_commands:
+                if (len(utility) == 3):
+                    current_versions = manager.get_current_version(utility[0])
+                    latest_versions = manager.get_latest_version(utility[2], utility[1])
+                    all_updates.update(latest_versions)
+                    cur_versions.update(current_versions)
+                else:
+                    current_versions = manager.get_current_version(utility[0])
+                    latest_versions = manager.get_latest_version(utility[1])
+                    all_updates.update(latest_versions)
+                    cur_versions.update(current_versions)
+        except Exception as e:
+            print("Ошибка определения версий программ!")
 
         update = is_new_version(all_updates)
 
@@ -40,10 +48,13 @@ def load_main_window():
         main_window.mainloop()
 
 def get_sources(manager):
-    data_path = os.path.join(os.getcwd(), "data")
-    sources_path = os.path.join(data_path,"sources.json")
-    sources = manager.out_data_from_json(sources_path)
-    return sources
+    try:
+        data_path = os.path.join(os.getcwd(), "data")
+        sources_path = os.path.join(data_path,"sources.json")
+        sources = manager.out_data_from_json(sources_path)
+        return sources
+    except Exception as e:
+        print("Источники не были найден!")
 
 def is_new_version(actual):
     if actual:
