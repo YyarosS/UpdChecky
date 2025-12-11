@@ -21,4 +21,5 @@ git clone https://github.com/YyarosS/UpdChecky.git
 cd UpdChecky
 ```
 после этого запустите файл  ```main```:
-```./"main"```
+```bash 
+./"main"```
