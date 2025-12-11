@@ -18,7 +18,7 @@
 Сначала клонируйте репозиторий проекта на ваш компьютер с помощью git:
 ```bash
 git clone https://github.com/YyarosS/UpdChecky.git
-cd UpdChecky```
-
+cd UpdChecky
+```
 после этого запустите файл  ```main```:
 ```./"main"```
