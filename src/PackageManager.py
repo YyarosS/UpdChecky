@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 import json
 import re
+import os
 
 class PackageManager(ABC):
     """
@@ -61,3 +62,11 @@ class PackageManager(ABC):
         except FileNotFoundError:
             print(f"Ошибка: Файл '{file_directory}' не найден.")
             return None
+        
+    def get_project_path():
+        try:
+            src_path = os.path.dirname(os.path.abspath(__file__))
+            project_root = os.path.dirname(src_path)
+            return project_root
+        except Exception as e:
+            print("Путь к проекту не найден!")

@@ -10,7 +10,7 @@ class Settings:
     def add_source(self,source_name):
         try:
             self.__determine_manager(source_name)
-            project_path = os.getcwd()
+            project_path = pm.get_project_path()
             data_path = os.path.join(project_path, "data")
             source_path=os.path.join(data_path, "sources.json")
             self.__save_on_storage(source_path)

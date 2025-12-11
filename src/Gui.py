@@ -1,5 +1,5 @@
 from Settings import Settings
-from PIL import Image
+# from PIL import Image
 
 import customtkinter
 import os
@@ -7,7 +7,7 @@ import os
 class Background(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-        self.__fonts_path ="~/Документы/Учеба/3 семестр/Open Source/GitUpdChecky/UpdChecky/ttf-fonts"
+        self.__fonts_path =self.__set_fonts_path()
         self.main_color = "#a564df"
         self.second_color = "#625b9f"
         self.background_color = "#0e0f11"
@@ -33,6 +33,13 @@ class Background(customtkinter.CTk):
             relwidth = 1.1,
             relheight = .85)
         
+    def __set_fonts_path(self):
+        file_path = os.path.abspath(__file__)
+        src_path = os.path.dirname(file_path)
+        project_root = os.path.dirname(src_path)
+        fonts_path =  os.path.join(project_root,"ttf-fonts")
+        return fonts_path
+
     def create_font(self, font_family_file, font_family, font_size, font_weight = "normal"):
         """Импортирует шрифт из файла ttf или otf в проект.
             font_family_file - название файла шрифта
@@ -41,7 +48,7 @@ class Background(customtkinter.CTk):
             font_weight - жирность шрифта (Bold, Normal)
         """
         font = os.path.expanduser(self.__fonts_path)
-        font = os.path.join(font, font_family_file)
+        font = os.path.join(self.__fonts_path, font_family_file)
             
         try:
             customtkinter.FontManager.load_font(font)
@@ -239,7 +246,7 @@ class Source_Item(Welcome_Window):
         """Возвращение значения источника установки программ"""
         return self.__source_name.cget("text")
     
-class Main_Windows(Background):
+class Main_Window(Background):
     def __init__(self):
         super().__init__()
         self.forground_color = "#c89bf3"

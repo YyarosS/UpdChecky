@@ -1,4 +1,4 @@
-from Gui import Welcome_Window, Main_Windows
+from Gui import Welcome_Window, Main_Window
 from Manager import Manager as app_manager
 
 import os
@@ -13,7 +13,7 @@ def create_welcome_screen():
 def load_main_window():
     if __name__ == "__main__":
         try:
-            main_window = Main_Windows()
+            main_window = Main_Window()
         
             manager = app_manager()
             sources = get_sources(manager) 
@@ -46,15 +46,15 @@ def load_main_window():
             main_window.empty_out()
 
         main_window.mainloop()
-
 def get_sources(manager):
     try:
-        data_path = os.path.join(os.getcwd(), "data")
-        sources_path = os.path.join(data_path,"sources.json")
+        data_path = "data"
+        file_name = "sources.json"
+        sources_path = os.path.join(data_path, file_name)
         sources = manager.out_data_from_json(sources_path)
         return sources
     except Exception as e:
-        print("Источники не были найден!")
+        print("Источники не были найдены!")
 
 def is_new_version(actual):
     if actual:
