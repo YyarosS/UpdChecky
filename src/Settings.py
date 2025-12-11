@@ -13,6 +13,10 @@ class Settings:
             project_path = pm.get_project_path()
             data_path = os.path.join(project_path, "data")
             source_path=os.path.join(data_path, "sources.json")
+
+            if not os.path.exists(data_path):
+                os.makedirs(data_path, exist_ok=True)
+                
             self.__save_on_storage(source_path)
         except Exception as e:
             print("Ошибка добавления источника пакетов!")

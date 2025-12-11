@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 import json
+import sys
 import re
 import os
 
@@ -62,9 +63,12 @@ class PackageManager(ABC):
         except FileNotFoundError:
             print(f"Ошибка: Файл '{file_directory}' не найден.")
             return None
-        
+    @staticmethod
     def get_project_path():
         try:
+            if getattr(sys, 'frozen', False):
+                return os.path.dirname(sys.argv[0])
+            
             src_path = os.path.dirname(os.path.abspath(__file__))
             project_root = os.path.dirname(src_path)
             return project_root
